@@ -48,7 +48,7 @@ public class ClassMemberController {
         Teacher teacher = new Teacher(0, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
         // call service
         int id =  classMemberService.addNewTeacher(teacher);
-
+        System.out.println("new user id: " + id);
         // create result
         JSONObject result = new JSONObject();
         result.put("status_code", Constants.OK);

@@ -19,6 +19,7 @@ public class UserRepository {
         int id = USER_COUNT + 1;
         person.setId(id);
         userList[USER_COUNT] = person;
+        USER_COUNT++;
         return person;
     }
 

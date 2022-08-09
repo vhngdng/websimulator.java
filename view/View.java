@@ -71,7 +71,8 @@ public class View {
      * display list of members (include teacher and student)
      */
     private void displayMembers() {
-
+        System.out.println("");
+        System.out.println("=============================================================");
         System.out.println("Danh sach lop");
         System.out.printf("%-30s", "Ten");
         System.out.printf("%-10s", "Chuc vu");
