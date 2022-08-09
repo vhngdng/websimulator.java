@@ -1,9 +1,15 @@
 package controller;
 
+import java.time.LocalDate;
+
+import org.json.JSONObject;
+
 import dto.MemberDto;
-import dto.StudentDto;
-import dto.TeacherDto;
+import model.Gender;
+import model.Teacher;
 import service.ClassMemberService;
+import util.Constants;
+import util.DateTimeUtil;
 
 public class ClassMemberController {
     
@@ -18,7 +24,7 @@ public class ClassMemberController {
      * @param studentDto
      * @return
      */
-    public int addStudent(StudentDto studentDto) {
+    public int addStudent(JSONObject studentInfo) {
 
         return 0;
 
@@ -29,8 +35,31 @@ public class ClassMemberController {
      * @param teachderDto
      * @return
      */
-    public int addTeacher(TeacherDto teachderDto) {
-        return 0;
+    public JSONObject addTeacher(JSONObject teacherInfo) {
+        // convert json object to teacher Dto
+        String name = teacherInfo.get("name").toString();
+        LocalDate birthday = DateTimeUtil.convertStringToLocalDate(teacherInfo.get("birthday").toString());
+        Gender gender = teacherInfo.get("gender").toString().toLowerCase().equals("name") ? Gender.MALE : Gender.FEMALE;
+        String email = teacherInfo.get("email").toString();
+        String phoneNumber = teacherInfo.get("phoneNumber").toString();
+        int yearOfExperience = Integer.parseInt(teacherInfo.get("yearOfExperience").toString());
+        String speciality = teacherInfo.get("speciality").toString();
+
+        Teacher teacher = new Teacher(0, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
+        // call service
+        int id =  classMemberService.addNewTeacher(teacher);
+
+        // create result
+        JSONObject result = new JSONObject();
+        result.put("status_code", Constants.OK);
+        if (id > 0) {
+            result.put("success", true);
+            result.put("message", "Add teacher thanh cong");
+        } else {
+            result.put("success", false);
+            result.put("message", "Add teacher that bai");
+        }
+        return result;
     }
 
     /**
@@ -47,16 +76,16 @@ public class ClassMemberController {
      * @param keyword
      * @return
      */
-    public MemberDto[] search(String keyword) {
+    public JSONObject search(String keyword) {
         return null;
     }
 
 
-    public StudentDto getStudentInfo(int id) {
+    public JSONObject getStudentInfo(int id) {
         return null;
     }
 
-    public TeacherDto getTeacherInfo(int id) {
+    public JSONObject getTeacherInfo(int id) {
         return null;
     }
 

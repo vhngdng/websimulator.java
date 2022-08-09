@@ -4,6 +4,9 @@ import java.util.Scanner;
 
 import controller.ClassMemberController;
 import dto.MemberDto;
+import util.Constants;
+
+import org.json.JSONObject;
 
 public class View {
     private Scanner scanner;
@@ -15,23 +18,38 @@ public class View {
         // init scanner
         this.scanner = new Scanner(System.in);
         this.memberList = null;
+        this.classMemberController = new ClassMemberController();
     }
     
-    public void display() {
-        displayMembers();
-        displayMenu();
+    public boolean display() {
         boolean isQuit = false;
         while(true) {
+            displayMembers();
+            displayMenu();
             System.out.println("Moi ban chon menu: ");
             int menu = scanner.nextInt();
             scanner.nextLine();
             switch (menu) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
+                case 1:{ // refresh
+                    break;
+                }
+                case 2: { //add teacher
+                    addNewTeacher();
+                    break;
+                }
+                case 3: { //add student
+                    addNewStudent();
+                    break;
+                }
+                case 4: { // search by keyword
+                    break;
+                }
+                case 5: { // view member
+                    break;
+                }
+                case 6: { // remove member
+                    break;
+                }
                 case 7: {
                     isQuit = true;
                     break;
@@ -46,8 +64,12 @@ public class View {
         if (isQuit == true) {
             this.quit();
         }
+        return true;
     }
 
+    /**
+     * display list of members (include teacher and student)
+     */
     private void displayMembers() {
 
         System.out.println("Danh sach lop");
@@ -64,6 +86,9 @@ public class View {
         }
     }
 
+    /**
+     * display menu
+     */
     private void displayMenu() {
         System.out.println("Menu:");
         System.out.println("[1] Refresh");
@@ -75,24 +100,51 @@ public class View {
         System.out.println("[7] Quit");
     }
 
+    /**
+     * input teacher info
+     */
     private void addNewTeacher() {
 
         System.out.println("Nhap ten:");
-        this.scanner.nextLine();
+        String name = this.scanner.nextLine();
         System.out.println("Nhap ngay sinh (dd/MM/yyy):");
-        this.scanner.nextLine();
+        String birthday = this.scanner.nextLine();
         System.out.println("Nhap gioi tinh (Nam/Nu):");
-        this.scanner.nextLine();
+        String gender = this.scanner.nextLine();
         System.out.println("Nhap email:");
-        this.scanner.nextLine();
+        String email = this.scanner.nextLine();
         System.out.println("Nhap so dien thoai:");
-        this.scanner.nextLine();
+        String phoneNumber = this.scanner.nextLine();
         System.out.println("Nhap so nam kinh nghiem:");
-        this.scanner.nextLine();
+        String yearOfExperience = this.scanner.nextLine();
         System.out.println("Nhap linh vuc giang day:");
-        this.scanner.nextLine();
+        String speciality = this.scanner.nextLine();
+
+        // create teacher info params
+        JSONObject teacherInfo = new JSONObject();
+        teacherInfo.put("name", name);
+        teacherInfo.put("birthday", birthday);
+        teacherInfo.put("gender", gender);
+        teacherInfo.put("email", email);
+        teacherInfo.put("phoneNumber", phoneNumber);
+        teacherInfo.put("yearOfExperience", yearOfExperience);
+        teacherInfo.put("speciality", speciality);
+
+        // call controller api
+        JSONObject result = classMemberController.addTeacher(teacherInfo);
+        if (result.getInt("status_code") == Constants.OK) {
+            if (result.getBoolean("success") == true) {
+                System.out.println("Tao moi teacher thanh cong ");
+            } else {
+                System.out.println("Tao moi teacher that bai ");
+            }
+        }
 
     }
+    
+    /**
+     * input student info
+     */
     private void addNewStudent() {
         System.out.println("Nhap ten:");
         this.scanner.nextLine();
@@ -110,6 +162,9 @@ public class View {
         this.scanner.nextLine();
     }
 
+    /**
+     * system quit
+     */
     private void quit() {
         System.out.println("Hen gap lai !!!");
         this.close();

@@ -1,8 +1,8 @@
 package service;
 
 import dto.MemberDto;
-import dto.StudentDto;
-import dto.TeacherDto;
+import model.Student;
+import model.Teacher;
 import model.User;
 import repository.UserRepository;
 
@@ -16,21 +16,24 @@ public class ClassMemberService {
 
     /**
      * add new student
-     * @param studentDto
+     * @param student
      * @return
      */
-    public int addNewStudent(StudentDto studentDto) {
+    public int addNewStudent(Student student) {
         return 0;
     }
 
 
     /**
      * add new teacher
-     * @param teacherDto
+     * @param teacher
      * @return
      */
-    public int addNewTeacher(TeacherDto teacherDto) {
-        return 0;
+    public int addNewTeacher(Teacher teacher) {
+        System.out.println("Add new teacher: ");
+        teacher.printInfo();
+        userRepository.addNewUser(teacher);
+        return teacher.getId();
     }
 
     /**

@@ -16,7 +16,10 @@ public class UserRepository {
      * @param person
      */
     public User addNewUser(User person) {
-        return null;
+        int id = USER_COUNT + 1;
+        person.setId(id);
+        userList[USER_COUNT] = person;
+        return person;
     }
 
     /**

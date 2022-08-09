@@ -1,11 +1,22 @@
 package model;
 
+import java.time.LocalDate;
+
 public class Teacher extends User {
     private int yearOfExperience;
-    public String speciality;
+    private String speciality;
 
-    public Teacher(String name, String birthday, Gender gender, String email, String phoneNumber) {
-        super(name, birthday, gender, email, phoneNumber);
-        //TODO Auto-generated constructor stub
+    public Teacher(int id, String name, LocalDate birthday, Gender gender, String email, String phoneNumber, int yearOfExperience, String speciality) {
+        super(id, name, birthday, gender, email, phoneNumber);
+        this.yearOfExperience = yearOfExperience;
+        this.speciality = speciality;
+    }
+
+    public String getSpeciality() {
+        return this.speciality;
+    }
+
+    public int getYearOfExperience() {
+        return this.yearOfExperience;
     }
 }
