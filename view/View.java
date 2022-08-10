@@ -31,6 +31,7 @@ public class View {
             scanner.nextLine();
             switch (menu) {
                 case 1:{ // refresh
+                    getMemberList();
                     break;
                 }
                 case 2: { //add teacher
@@ -83,7 +84,14 @@ public class View {
         if (memberList == null || memberList.length == 0) {
             System.out.println("Khong co thanh vien nao trong lop");
         } else {
-            
+            for (MemberDto member : this.memberList) {
+                System.out.printf("%-30s", member.name);
+                System.out.printf("%-10s", member.role);
+                System.out.printf("%-10s", member.gender);
+                System.out.printf("%-30s", member.email);
+                System.out.printf("%-12s", member.phoneNumber);
+                System.out.println("\n");
+            }
         }
     }
 
@@ -131,6 +139,8 @@ public class View {
         teacherInfo.put("yearOfExperience", yearOfExperience);
         teacherInfo.put("speciality", speciality);
 
+        // System.out.println("" + teacherInfo);
+
         // call controller api
         JSONObject result = classMemberController.addTeacher(teacherInfo);
         if (result.getInt("status_code") == Constants.OK) {
@@ -139,6 +149,8 @@ public class View {
             } else {
                 System.out.println("Tao moi teacher that bai ");
             }
+        } else {
+            System.out.println("Co loi o server");
         }
 
     }
@@ -148,21 +160,66 @@ public class View {
      */
     private void addNewStudent() {
         System.out.println("Nhap ten:");
-        this.scanner.nextLine();
+        String name = this.scanner.nextLine();
         System.out.println("Nhap ngay sinh (dd/MM/yyy):");
-        this.scanner.nextLine();
+        String birthday = this.scanner.nextLine();
         System.out.println("Nhap gioi tinh (Nam/Nu):");
-        this.scanner.nextLine();
+        String gender = this.scanner.nextLine();
         System.out.println("Nhap email:");
-        this.scanner.nextLine();
+        String email = this.scanner.nextLine();
         System.out.println("Nhap so dien thoai:");
-        this.scanner.nextLine();
+        String phoneNumber = this.scanner.nextLine();
         System.out.println("Dang ky hoc online (Y/N):");
-        this.scanner.nextLine();
+        String isOnline = this.scanner.nextLine();
         System.out.println("Nhap background:");
-        this.scanner.nextLine();
+        String background = this.scanner.nextLine();
+
+        JSONObject studentInfo = new JSONObject();
+        //put data to key
+        studentInfo.put("name", name);
+        studentInfo.put("birthday", birthday);
+        studentInfo.put("gender", gender);
+        studentInfo.put("email", email);
+        studentInfo.put("phoneNumber", phoneNumber);
+        studentInfo.put("isOnline", isOnline);
+        studentInfo.put("background", background);
+        // call api
+        JSONObject result = classMemberController.addStudent(studentInfo);
+        if (result.getInt("status_code") == Constants.OK) {
+            if (result.getBoolean("success") == true) {
+                System.out.println("Tao moi student thanh cong ");
+            } else {
+                System.out.println("Tao moi student that bai ");
+            }
+        } else {
+            System.out.println("Co loi o server");
+        }
     }
 
+    private void getMemberList() {
+        JSONObject result = classMemberController.getMemberList();
+        JSONObject[] userListJson = (JSONObject[])result.get("data");
+        this.memberList = new MemberDto[userListJson.length];
+        int count = 0;
+        for (JSONObject userJson : userListJson) {
+            String name = userJson.get("name").toString();
+            String role = userJson.get("role").toString();
+            String gender = userJson.get("gender").toString();
+            String email = userJson.get("email").toString();
+            String phoneNumber = userJson.get("phoneNumber").toString();
+            
+            MemberDto member = new MemberDto();
+            member.name = name;
+            member.role = role;
+            member.gender = gender;
+            member.email = email;
+            member.phoneNumber = phoneNumber;
+
+            this.memberList[count++] = member;
+        }
+
+
+    }
     /**
      * system quit
      */

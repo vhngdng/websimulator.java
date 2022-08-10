@@ -46,7 +46,21 @@ public class UserRepository {
      * @return
      */
     public User[] getAllUser() {
-        return null;
+        int count = 0;
+        for (User user : this.userList) {
+            if (user != null) {
+                count++;
+            }
+        }
+        int temp = 0;
+        User[] users = new User[count];
+        for (User user : this.userList) {
+            if (user != null) {
+                users[temp] = user;
+                temp++;
+            }
+        }
+        return users;
     }
     
 }

@@ -40,7 +40,7 @@ public class User {
         return this.gender;
     }
 
-    public String getEmail(String email) {
+    public String getEmail() {
         return this.email;
     }
 

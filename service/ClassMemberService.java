@@ -20,9 +20,18 @@ public class ClassMemberService {
      * @return
      */
     public int addNewStudent(Student student) {
-        return 0;
+        System.out.println("Add new student: ");
+        student.printInfo();
+        userRepository.addNewUser(student);
+        // gui mail thong bao
+        // code logic gui mail o day ( vi du)
+        return student.getId();
     }
 
+    public User[] getMemberList() {
+        User[] users = userRepository.getAllUser();
+        return users;
+    }
 
     /**
      * add new teacher
@@ -33,6 +42,8 @@ public class ClassMemberService {
         System.out.println("Add new teacher: ");
         teacher.printInfo();
         userRepository.addNewUser(teacher);
+        // gui mail thong bao
+        // code logic gui mail o day ( vi du)
         return teacher.getId();
     }
 
