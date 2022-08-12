@@ -1,9 +1,16 @@
 package view;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import controller.ClassMemberController;
 import dto.MemberDto;
+import model.Gender;
+import model.Student;
+import model.Teacher;
+import model.User;
+import service.ClassMemberService;
 import util.Constants;
 
 import org.json.JSONObject;
@@ -11,41 +18,45 @@ import org.json.JSONObject;
 public class View {
     private Scanner scanner;
     private MemberDto[] memberList;
-
+    private User[] userList;
     private ClassMemberController classMemberController;
 
     public View() {
         // init scanner
         this.scanner = new Scanner(System.in);
-        this.memberList = null;
+
         this.classMemberController = new ClassMemberController();
     }
-    
+
     public boolean display() {
         boolean isQuit = false;
-        while(true) {
+        while (true) {
             displayMembers();
             displayMenu();
             System.out.println("Moi ban chon menu: ");
             int menu = scanner.nextInt();
             scanner.nextLine();
             switch (menu) {
-                case 1:{ // refresh
-                    getMemberList();
+                case 1: { // refresh
+                    showMemberList();
                     break;
                 }
-                case 2: { //add teacher
+                case 2: { // add teacher
                     addNewTeacher();
                     break;
                 }
-                case 3: { //add student
+                case 3: { // add student
                     addNewStudent();
                     break;
                 }
                 case 4: { // search by keyword
+                    System.out.println("Hay nhap keyword can tim: ");
+                    String keyword = scanner.nextLine();
+                    hasKeyWord(keyword);
                     break;
                 }
                 case 5: { // view member
+                    getMemberList();
                     break;
                 }
                 case 6: { // remove member
@@ -138,7 +149,7 @@ public class View {
         teacherInfo.put("phoneNumber", phoneNumber);
         teacherInfo.put("yearOfExperience", yearOfExperience);
         teacherInfo.put("speciality", speciality);
-
+        // teacherInfo.put("role", "Giao vien");
         // System.out.println("" + teacherInfo);
 
         // call controller api
@@ -154,7 +165,7 @@ public class View {
         }
 
     }
-    
+
     /**
      * input student info
      */
@@ -175,7 +186,7 @@ public class View {
         String background = this.scanner.nextLine();
 
         JSONObject studentInfo = new JSONObject();
-        //put data to key
+        // put data to key
         studentInfo.put("name", name);
         studentInfo.put("birthday", birthday);
         studentInfo.put("gender", gender);
@@ -183,6 +194,7 @@ public class View {
         studentInfo.put("phoneNumber", phoneNumber);
         studentInfo.put("isOnline", isOnline);
         studentInfo.put("background", background);
+        // studentInfo.put("role", "sinh vien");
         // call api
         JSONObject result = classMemberController.addStudent(studentInfo);
         if (result.getInt("status_code") == Constants.OK) {
@@ -196,9 +208,9 @@ public class View {
         }
     }
 
-    private void getMemberList() {
+    private void showMemberList() {
         JSONObject result = classMemberController.getMemberList();
-        JSONObject[] userListJson = (JSONObject[])result.get("data");
+        JSONObject[] userListJson = (JSONObject[]) result.get("data");
         this.memberList = new MemberDto[userListJson.length];
         int count = 0;
         for (JSONObject userJson : userListJson) {
@@ -207,7 +219,7 @@ public class View {
             String gender = userJson.get("gender").toString();
             String email = userJson.get("email").toString();
             String phoneNumber = userJson.get("phoneNumber").toString();
-            
+
             MemberDto member = new MemberDto();
             member.name = name;
             member.role = role;
@@ -217,9 +229,105 @@ public class View {
 
             this.memberList[count++] = member;
         }
-
-
     }
+
+    public void getMemberList() {
+        JSONObject result = classMemberController.getMemberList();
+        JSONObject[] userListJson = (JSONObject[]) result.get("data");
+        this.userList = new User[userListJson.length];
+        int count = 0;
+        for (JSONObject userJson : userListJson) {
+
+            String name = userJson.get("name").toString();
+            String role = userJson.get("role").toString();
+            Gender gender = userJson.get("gender").toString().toLowerCase() == "nam" ? Gender.MALE : Gender.FEMALE;
+            String email = userJson.get("email").toString();
+            String phoneNumber = userJson.get("phoneNumber").toString();
+            int id = Integer.valueOf(userJson.get("id").toString());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate birthday = LocalDate.parse((userJson.get("birthday").toString()), formatter);
+
+            User user = new User(id, name, birthday, gender, email, phoneNumber);
+           
+            
+            
+            if ((role.toLowerCase()).equals("giao vien")) {
+                int yearOfExperience = Integer.valueOf(userJson.get("yearOfExperience").toString());
+                String speciality = userJson.get("speciality").toString();
+                user = new Teacher(id, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
+                
+                
+            }
+            if (role.toLowerCase().equals("sinh vien")) {
+                boolean isOnline = userJson.get("isOnline").toString().toLowerCase() == "hoc online" ? true : false;
+                String background = userJson.get("background").toString();
+                user = new Student(id, name, birthday, gender, email, phoneNumber, isOnline, background);
+                
+            
+            }
+            user.setRole(role);
+            
+            this.userList[count++] = user;
+            
+        }
+        for (User temp : this.userList) {
+            if (temp != null) {
+                temp.printInfo();
+                System.out.print(", Vi tri: " + temp.getRole() + "\n");
+
+            }
+        }
+    }
+
+    public void hasKeyWord(String keyword) {
+        JSONObject result = classMemberController.hasKeyword(keyword);
+        // gui request toi controller voi input la keyword
+        JSONObject[] userListJson = (JSONObject[]) result.get("data");
+        this.userList = new User[userListJson.length];
+        int count = 0;
+        for (JSONObject userJson : userListJson) {
+
+            String name = userJson.get("name").toString();
+            String role = userJson.get("role").toString();
+            Gender gender = userJson.get("gender").toString().toLowerCase() == "nam" ? Gender.MALE : Gender.FEMALE;
+            String email = userJson.get("email").toString();
+            String phoneNumber = userJson.get("phoneNumber").toString();
+            int id = Integer.valueOf(userJson.get("id").toString());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate birthday = LocalDate.parse((userJson.get("birthday").toString()), formatter);
+
+            User user = new User(id, name, birthday, gender, email, phoneNumber);
+           
+            
+            
+            if ((role.toLowerCase()).equals("giao vien")) {
+                int yearOfExperience = Integer.valueOf(userJson.get("yearOfExperience").toString());
+                String speciality = userJson.get("speciality").toString();
+                user = new Teacher(id, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
+                
+                
+            }
+            if (role.toLowerCase().equals("sinh vien")) {
+                boolean isOnline = userJson.get("isOnline").toString().toLowerCase() == "hoc online" ? true : false;
+                String background = userJson.get("background").toString();
+                user = new Student(id, name, birthday, gender, email, phoneNumber, isOnline, background);
+                
+            
+            }
+            user.setRole(role);
+            
+            this.userList[count++] = user;
+            
+        }
+        for (User temp : this.userList) {
+            if (temp != null) {
+                temp.printInfo();
+                System.out.print(", Vi tri: " + temp.getRole() + "\n");
+
+            }
+        }
+    }
+
     /**
      * system quit
      */

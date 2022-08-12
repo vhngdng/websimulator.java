@@ -12,11 +12,28 @@ public class Teacher extends User {
         this.speciality = speciality;
     }
 
+
+
+    public void setSpeciality(String speciality){
+        this.speciality = speciality;
+    }
+
     public String getSpeciality() {
         return this.speciality;
     }
 
+    public void setYearOfExperience(int yearOfExperience) {
+        this.yearOfExperience = yearOfExperience;
+    }
+
     public int getYearOfExperience() {
         return this.yearOfExperience;
+    }
+
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.print(" year of experience: " + yearOfExperience + ", speciality: " + speciality );
+
     }
 }

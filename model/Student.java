@@ -11,11 +11,30 @@ public class Student extends User {
         this.isOnline = isOnline;
         this.background = background;
     }
+
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
     public boolean getIsOnline() {
         return this.isOnline;
     }
+
+    public void setBackground(String background){
+        this.background = background;
+    }
+
     public String getBackground() {
         return this.background;
     }
     
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        if (isOnline){
+            System.out.print(" background: " + background + ", đăng ký lớp Online" );
+        }else{
+            System.out.println(" background: " + background + ", đăng ký lớp Offline" );
+        }
+    }
 }
