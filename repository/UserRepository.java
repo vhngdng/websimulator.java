@@ -61,9 +61,7 @@ public class UserRepository {
         for (User usr : this.userList) {
             if (id == (usr.getId())) {
                 users = usr;
-
                 break;
-
             }
 
         }
@@ -96,11 +94,10 @@ public class UserRepository {
         return users;
     }
 
+    // Find user with keyword
     public User[] findUser(String keyword) {
         int temp = 0;
-
         User[] user = getAllUser();
-
         for (User usr : user) {
             if (usr.getName().toLowerCase().contains(keyword)
                     || usr.getBirthday().toString().contains(keyword)
@@ -111,16 +108,16 @@ public class UserRepository {
                             && ((Teacher) usr).getSpeciality().toLowerCase().contains(keyword))
                     || ((usr instanceof Student)
                             && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
-                temp++;
+                temp++;  // tim array length
             }
         }
 
-        if (temp == 0) {
+        if (temp == 0) {        // khong tim thay ket qua tra lai null
             User[] userHasKeyword = null;
             return userHasKeyword;
         }
         User[] userHasKeyword = new User[temp];
-        if (temp != 0) {
+        if (temp != 0) {        // lay thong tin cua user tim duoc ra
             userHasKeyword = new User[temp];
             int i = 0;
             for (User usr : user) {
@@ -134,7 +131,6 @@ public class UserRepository {
                         || ((usr instanceof Student)
                                 && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
                     userHasKeyword[i++] = usr;
-
                 }
             }
         }
