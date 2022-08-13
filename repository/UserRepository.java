@@ -36,10 +36,11 @@ public class UserRepository {
      * @return
      */
     public User deleteUser(int id) {
-        User people = new User(id, null, null, null, null, null);
+        User people = null;
         userList[id - 1] = people;
         if (USER_COUNT >= 1) {
             USER_COUNT = USER_COUNT - 1;
+            
         } else {
             USER_COUNT = 0;
         }
