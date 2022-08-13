@@ -37,10 +37,15 @@ public class UserRepository {
      */
     public User deleteUser(int id) {
         User people = null;
-        userList[id - 1] = people;
         if (USER_COUNT >= 1) {
-            USER_COUNT = USER_COUNT - 1;
+
+            for (int i = id - 1; i < USER_COUNT - 1; i++) {
+                userList[i] = userList[i + 1];
+            }
             
+            
+            userList[USER_COUNT - 1] = people;
+            USER_COUNT = USER_COUNT - 1;
         } else {
             USER_COUNT = 0;
         }
@@ -105,9 +110,9 @@ public class UserRepository {
                     || usr.getEmail().toLowerCase().contains(keyword)
                     || Integer.toString(usr.getId()).contains(keyword)
                     || usr.getPhoneNumber().contains(keyword)
-                    || ( (usr instanceof Teacher) 
-                            && ((Teacher)usr).getSpeciality().toLowerCase().contains(keyword))
-                    || ( (usr instanceof Student) 
+                    || ((usr instanceof Teacher)
+                            && ((Teacher) usr).getSpeciality().toLowerCase().contains(keyword))
+                    || ((usr instanceof Student)
                             && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
                 temp++;
             }
@@ -127,10 +132,10 @@ public class UserRepository {
                         || usr.getEmail().toLowerCase().contains(keyword)
                         || Integer.toString(usr.getId()).contains(keyword)
                         || usr.getPhoneNumber().contains(keyword)
-                        || ( (usr instanceof Teacher) 
-                            && ((Teacher)usr).getSpeciality().toLowerCase().contains(keyword))
-                        || ( (usr instanceof Student) 
-                            && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
+                        || ((usr instanceof Teacher)
+                                && ((Teacher) usr).getSpeciality().toLowerCase().contains(keyword))
+                        || ((usr instanceof Student)
+                                && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
                     userHasKeyword[i++] = usr;
 
                 }
