@@ -63,8 +63,8 @@ public class View {
                 }
                 case 6: { // remove member
                     deleteUser();
-                   
                     break;
+
                 }
                 case 7: {
                     isQuit = true;
@@ -153,7 +153,7 @@ public class View {
         teacherInfo.put("phoneNumber", phoneNumber);
         teacherInfo.put("yearOfExperience", yearOfExperience);
         teacherInfo.put("speciality", speciality);
-        // teacherInfo.put("role", "Giao vien");
+
         // System.out.println("" + teacherInfo);
 
         // call controller api
@@ -198,7 +198,7 @@ public class View {
         studentInfo.put("phoneNumber", phoneNumber);
         studentInfo.put("isOnline", isOnline);
         studentInfo.put("background", background);
-        // studentInfo.put("role", "sinh vien");
+        // studentInfo.put("role", "Sinh vien");
         // call api
         JSONObject result = classMemberController.addStudent(studentInfo);
         if (result.getInt("status_code") == Constants.OK) {
@@ -291,6 +291,13 @@ public class View {
 
     private void hasKeyWord(String keyword) {
         JSONObject result = classMemberController.hasKeyword(keyword);
+        
+        if (result == null) {       // Khong tim duoc doi tuong
+            System.out.println("Khong co doi tuong phu hop");
+            return;
+        }
+        
+
         // gui request toi controller voi input la keyword va nhan lai 1 file json
         JSONObject[] userListJson = (JSONObject[]) result.get("data");
         // lay data tu json file va chia vao cac phan tu trong array json
@@ -308,17 +315,17 @@ public class View {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate birthday = LocalDate.parse((userJson.get("birthday").toString()), formatter);
 
-            User user = new User(id, name, birthday, gender, email, phoneNumber);  // create object user class
-
+            User user = new User(id, name, birthday, gender, email, phoneNumber); // create object user class
+            
             if ((role.toLowerCase()).equals("giao vien")) {
-                //teacher
+                // teacher
                 int yearOfExperience = Integer.valueOf(userJson.get("yearOfExperience").toString());
                 String speciality = userJson.get("speciality").toString();
                 user = new Teacher(id, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
 
             }
             if (role.toLowerCase().equals("sinh vien")) {
-                //student
+                // student
                 boolean isOnline = userJson.get("isOnline").toString().toLowerCase() == "hoc online" ? true : false;
                 String background = userJson.get("background").toString();
                 user = new Student(id, name, birthday, gender, email, phoneNumber, isOnline, background);
@@ -342,34 +349,50 @@ public class View {
     private void deleteUser() {
         System.out.println("Hay nhap id can xoa: ");
         int id = scanner.nextInt();
-        boolean result =  classMemberController.findTeacherOrStudentByID(id);   // xem la teacher hay student
-        String pressButton = new String();
+        scanner.nextLine();
+        boolean result = classMemberController.findTeacherOrStudentByID(id); // xem la teacher hay student
+
         if (result) {
-            getTeacherInfoWithID(id); 
-        }else {
+            getTeacherInfoWithID(id);
+
+        } else {
             getStudentInfoWithID(id);
         }
 
-        do{
-        System.out.println("Ban co muon xoa member nay khong ? (Y/X)");
-        pressButton = scanner.nextLine();
-     
-        if (pressButton.toLowerCase().equals("x")) {
-            classMemberController.deleteUser(id);
+        boolean delete = false;
+
+        while (true) {
+            System.out.println("Ban co muon xoa member nay khong ? (Y/N)");
+            String pressButton = scanner.nextLine();
+            switch (pressButton) {
+                case "y": {
+                    classMemberController.deleteUser(id);
+                    delete = true;
+                    return;
+                }
+                case "n": {
+                    delete = true;
+                    return;
+                }
+                default: {
+                    delete = false;
+                }
+            }
+            if (delete == true) {
+                break;
+            }
+
         }
-        if (pressButton.toLowerCase().equals("y")) {
-            System.out.println("Xoa member khong thanh cong");
-            break;
-        }
-        }while ((pressButton.toLowerCase()).equals("x") || pressButton.toLowerCase().equals("y") );
+
     }
+
+    // while ((pressButton.toLowerCase()).equals("x") == true ||
+    // pressButton.toLowerCase().equals("y") == true );
 
     // Find info teacher with ID
     private void getTeacherInfoWithID(int id) {
         JSONObject userJson = classMemberController.getTeacherInfo(id);
-
         String name = userJson.get("name").toString();
-        String role = "Giao vien";
         Gender gender = userJson.get("gender").toString().toLowerCase() == "nam" ? Gender.MALE : Gender.FEMALE;
         String email = userJson.get("email").toString();
         String phoneNumber = userJson.get("phoneNumber").toString();
@@ -377,32 +400,32 @@ public class View {
         LocalDate birthday = LocalDate.parse((userJson.get("birthday").toString()), formatter);
         int yearOfExperience = Integer.valueOf(userJson.get("yearOfExperience").toString());
         String speciality = userJson.get("speciality").toString();
-                
+
         User user = new Teacher(id, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
-        user.setRole(role);
-        
+
         user.printInfo();
+        // return user;
     }
 
-    //Find info Student with ID
-     private void getStudentInfoWithID(int id) {
+    // Find info Student with ID
+    private void getStudentInfoWithID(int id) {
         JSONObject userJson = classMemberController.getStudentInfo(id);
 
         String name = userJson.get("name").toString();
-        String role = "Sinh vien";
         Gender gender = userJson.get("gender").toString().toLowerCase() == "nam" ? Gender.MALE : Gender.FEMALE;
         String email = userJson.get("email").toString();
         String phoneNumber = userJson.get("phoneNumber").toString();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate birthday = LocalDate.parse((userJson.get("birthday").toString()), formatter);
         boolean isOnline = userJson.get("isOnline").toString().toLowerCase() == "hoc online" ? true : false;
-                String background = userJson.get("background").toString();
-        
+        String background = userJson.get("background").toString();
+
         User user = new Student(id, name, birthday, gender, email, phoneNumber, isOnline, background);
-        user.setRole(role);
-        
+
         user.printInfo();
+        // return user;
     }
+
     /**
      * system quit
      */

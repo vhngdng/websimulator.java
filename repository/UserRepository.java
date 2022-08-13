@@ -20,8 +20,10 @@ public class UserRepository {
      * @param person
      */
     public User addNewUser(User person) {
+
         int id = USER_COUNT + 1;
         person.setId(id);
+
         userList[USER_COUNT] = person;
         USER_COUNT++;
         return person;
@@ -37,8 +39,8 @@ public class UserRepository {
         User people = new User(id, null, null, null, null, null);
         userList[id - 1] = people;
         if (USER_COUNT >= 1) {
-        USER_COUNT = USER_COUNT -1;
-        }else{
+            USER_COUNT = USER_COUNT - 1;
+        } else {
             USER_COUNT = 0;
         }
         return people;
@@ -51,17 +53,19 @@ public class UserRepository {
      * @return
      */
     public User getUserById(int id) {
-        User user = null;
-        for (int i = 0; i < 100; i++) {
-            if (id == userList[i].getId() ) {
-              user = userList[i];  
-            }else{
-                System.out.println("Khong tim thay ID");
+
+        User users = new User(id, null, null, null, null, null);
+        for (User usr : this.userList) {
+            if (id == (usr.getId())) {
+                users = usr;
+
                 break;
+
             }
 
         }
-    return user;
+
+        return users;
     }
 
     /**
@@ -91,19 +95,26 @@ public class UserRepository {
 
     public User[] findUser(String keyword) {
         int temp = 0;
-        User user[] = getAllUser();
+
+        User[] user = getAllUser();
+
         for (User usr : user) {
-            String speciality = ((Teacher) usr).getSpeciality();
-            String background = ((Student) usr).getBackground();
             if (usr.getName().toLowerCase().contains(keyword)
                     || usr.getBirthday().toString().contains(keyword)
                     || usr.getEmail().toLowerCase().contains(keyword)
                     || Integer.toString(usr.getId()).contains(keyword)
                     || usr.getPhoneNumber().contains(keyword)
-                    || (speciality.toLowerCase().equals(keyword) && usr instanceof Teacher)
-                    || (background.toLowerCase().equals(keyword) && usr instanceof Student)) {
+                    || ( (usr instanceof Teacher) 
+                            && ((Teacher)usr).getSpeciality().toLowerCase().contains(keyword))
+                    || ( (usr instanceof Student) 
+                            && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
                 temp++;
             }
+        }
+
+        if (temp == 0) {
+            User[] userHasKeyword = null;
+            return userHasKeyword;
         }
         User[] userHasKeyword = new User[temp];
         if (temp != 0) {
@@ -115,9 +126,10 @@ public class UserRepository {
                         || usr.getEmail().toLowerCase().contains(keyword)
                         || Integer.toString(usr.getId()).contains(keyword)
                         || usr.getPhoneNumber().contains(keyword)
-                        || (((Teacher) usr).getSpeciality().toLowerCase().contains(keyword) && usr instanceof Teacher)
-                        || (((Student) usr).getBackground().toLowerCase().contains(keyword)
-                                && usr instanceof Student)) {
+                        || ( (usr instanceof Teacher) 
+                            && ((Teacher)usr).getSpeciality().toLowerCase().contains(keyword))
+                        || ( (usr instanceof Student) 
+                            && ((Student) usr).getBackground().toLowerCase().contains(keyword))) {
                     userHasKeyword[i++] = usr;
 
                 }

@@ -23,6 +23,7 @@ public class ClassMemberService {
     public int addNewStudent(Student student) {
         System.out.println("Add new student: ");
         student.printInfo();
+        student.setRole("Sinh vien");
         userRepository.addNewUser(student);
         // gui mail thong bao
         // code logic gui mail o day ( vi du)
@@ -43,6 +44,7 @@ public class ClassMemberService {
     public int addNewTeacher(Teacher teacher) {
         System.out.println("Add new teacher: ");
         teacher.printInfo();
+        teacher.setRole("Giao vien");
         userRepository.addNewUser(teacher);
         // gui mail thong bao
         // code logic gui mail o day ( vi du)
@@ -73,8 +75,9 @@ public class ClassMemberService {
     }
 
     public boolean findTeacherOrStudentByID (int id){
-        User user = userRepository.getUserById(id);
-        boolean result = (user.getRole().toLowerCase()).equals("giao vien");
+        User user = this.userRepository.getUserById(id);
+        String role = user.getRole();
+        boolean result = role.toLowerCase().equals("giao vien");
         return result;
     }
 

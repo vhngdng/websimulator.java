@@ -37,7 +37,11 @@ public class ClassMemberController {
         String phoneNumber = studentInfo.get("phoneNumber").toString();
         boolean isOnline = studentInfo.get("isOnline").toString().toLowerCase().equals("y") ? true : false;
         String background = studentInfo.get("background").toString();
+        
         Student student = new Student(0, name, birthday, gender, email, phoneNumber, isOnline, background);
+        
+        
+        
         // call service
         int id = classMemberService.addNewStudent(student);
         System.out.println(", new user id: " + id);
@@ -70,8 +74,10 @@ public class ClassMemberController {
         String phoneNumber = teacherInfo.get("phoneNumber").toString();
         int yearOfExperience = Integer.parseInt(teacherInfo.get("yearOfExperience").toString());
         String speciality = teacherInfo.get("speciality").toString();
-
+        
         Teacher teacher = new Teacher(0, name, birthday, gender, email, phoneNumber, yearOfExperience, speciality);
+        
+
         // call service
         int id = classMemberService.addNewTeacher(teacher);
         System.out.println(", new user id: " + id);
@@ -166,6 +172,10 @@ public class ClassMemberController {
      */
     public JSONObject hasKeyword(String keyword) {
         User[] users = classMemberService.hasKeyword(keyword);
+        if (users == null) {
+            JSONObject user = null;
+            return user;
+        }
         JSONObject userJson = new JSONObject();
         JSONObject userListJson = new JSONObject();
         JSONObject[] temp = new JSONObject[users.length];
@@ -223,7 +233,7 @@ public class ClassMemberController {
 
     //Find Student or Teacher
     public boolean findTeacherOrStudentByID (int id) {
-        boolean result = classMemberService.findTeacherOrStudentByID(id);
+        boolean result = this.classMemberService.findTeacherOrStudentByID(id);
         return result;
     }
 
@@ -248,7 +258,7 @@ public class ClassMemberController {
             String email = user.getEmail();
             String phoneNumber = user.getPhoneNumber();
             String name = user.getName();
-            String role = "Giao vien";
+            String role = user.getRole();
             int yearOfExperience = ((Teacher) user).getYearOfExperience();
             String speciality = ((Teacher) user).getSpeciality();
 
